@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  octoprint:
+    image: octoprint/octoprint
+    restart: unless-stopped
+    ports:
+      - 5000:80
+    # devices:
+    # use `python -m serial.tools.miniterm` to see what the name is of the printer, this requires pyserial
+    #  - /dev/ttyACM0:/dev/ttyACM0
+    #  - /dev/video0:/dev/video0
+    volumes:
+     - octoprint_data:/octoprint
+    # uncomment the lines below to ensure camera streaming is enabled when
+    # you add a video device
+    environment:
+     - ENABLE_MJPG_STREAMER=true
+
+  orcaslicer:
+    image: lscr.io/linuxserver/orcaslicer:latest
+    container_name: orcaslicer
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - orcaslicer_data:/config
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: unless-stopped
+
+volumes:
+  octoprint_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/backup/octoprint
+      o: bind
+  orcaslicer_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/backup/orcaslicer
+      o: bind
