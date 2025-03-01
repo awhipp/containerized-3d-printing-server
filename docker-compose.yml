@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   octoprint:
     image: octoprint/octoprint
@@ -11,7 +9,7 @@ services:
     #  - /dev/ttyACM0:/dev/ttyACM0
     #  - /dev/video0:/dev/video0
     volumes:
-     - octoprint_data:/octoprint
+     - ./backup/octoprint:/octoprint
     # uncomment the lines below to ensure camera streaming is enabled when
     # you add a video device
     environment:
@@ -25,22 +23,8 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - orcaslicer_data:/config
+      - ./backup/orcaslicer:/config
     ports:
       - 3000:3000
       - 3001:3001
     restart: unless-stopped
-
-volumes:
-  octoprint_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/backup/octoprint
-      o: bind
-  orcaslicer_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/backup/orcaslicer
-      o: bind
